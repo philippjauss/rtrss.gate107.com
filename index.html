@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html class="no-js" lang="de">
+    <head>
+        <title>Realtime RSS Feeds</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      //* { margin: 0; padding: 0; box-sizing: border-box; }
+      //body { font: 13px Helvetica, Arial; }
+      //#messages { list-style-type: none; margin: 0; padding: 0; }
+      //#messages li { padding: 5px 10px; }
+      //#messages li:nth-child(odd) { background: #eee; }
+    </style> 
+    <link rel="stylesheet" href="css/normalize.css">     
+    <link rel="stylesheet" href="css/foundation.css"> 
+    <link rel="stylesheet" href="css/app.css">
+    <script src="js/vendor/modernizr.js"></script>
+    </head>
+    <body>
+        
+<div class="off-canvas-wrap" data-offcanvas>
+  <div class="inner-wrap">
+    <nav class="tab-bar">
+        <section class="left-small">
+          <a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+        </section>
+
+        <section class="middle tab-bar-section">
+            <h1 class="title"><a href="http://www.gate107.com:3000">Realtime RSS Feeds</a></h1>
+        </section>
+        <section id="status" class="right-small statusgreen">
+        <div id="reload">
+            <!--<img src="img/reload.png" alt="reload page">-->
+        </div>            
+        </section>
+
+
+    </nav>
+
+    <aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        <li id="home"><a href="#Home">Home</a></li>
+        <li id="about"><a href="#About">About</a></li>
+      </ul>
+    </aside>
+
+    <section>
+        
+
+        
+        <!-- main content -->
+        <div class="row">
+            <div id="homepage" class="small-12 large-12 columns">
+
+                <ul id="messages"></ul>
+
+            </div>
+            <div id="aboutpage" class="small-12 large-12 columns hidediv">
+                <p>
+                    Das ist nur ein einfacher Prototyp mit node.js unter Einbindung
+                    des feedsub moduls (https://github.com/fent/node-feedsub) dass im Minutentakt
+                    serverseitig in paar definierte rss-feeds "abklappert" und neue Artikel-Links an
+                    alle verbundenen clients schickt. Der Sourcecode dieser node.js "Web-App" wird hier unten 
+                    angezeigt.
+                </p>
+                <p>
+                    Die Idee dahinter war, nicht ständig auf meinem Browser aktualisieren zu müssen, um die neuesten RSS-Feed-
+                    Artikel angezeigt zu bekommen. Ich mache also nichts anderes als das "F5" auf den Server zu verlagern, und 
+                    neue Artikel links zu mir zu "pushen".
+                </p>
+                <pre>
+                    var FeedSub = require('feedsub');
+
+    var app = require('express')();
+    var http = require('http').Server(app);
+    var io = require('socket.io')(http);
+
+
+    app.get('/', function(req,res){
+
+        res.sendFile(__dirname+'/index.html');
+    });
+
+    app.get('/css/normalize.css', function(req,res){
+        res.sendFile(__dirname+'/css/normalize.css');
+    });
+
+
+    app.get('/css/foundation.css', function(req,res){
+        res.sendFile(__dirname+'/css/foundation.css');
+    });
+
+    app.get('/css/app.css', function(req,res){
+        res.sendFile(__dirname+'/css/app.css');
+    });
+
+    app.get('/js/vendor/modernizr.js', function(req,res){
+        res.sendFile(__dirname+'/js/vendor/modernizr.js');
+    });
+
+    app.get('/js/vendor/jquery.js', function(req,res){
+        res.sendFile(__dirname+'/js/vendor/jquery.js');
+    });
+
+    app.get('/js/foundation.min.js', function(req,res){
+        res.sendFile(__dirname+'/js/foundation.min.js');
+    });
+
+
+    io.on('connection', function(socket){
+        console.log('a user connected');
+        socket.on('disconnect', function(){
+            console.log('user disconnected');
+        });
+    });
+
+
+    http.listen(3000, function (){
+        console.log('listening on *:3000');
+    });
+
+
+
+    var feedSources= [
+            "http://feeds.feedburner.com/stadt-bremerhaven/dqXM?format=xml",
+            "http://feeds.feedburner.com/netbooknewsde?format=xml",
+            "http://feeds.feedburner.com/mobiflip",
+            "http://www.heise.de/newsticker/heise.rdf",
+            "http://rss.feedsportal.com/c/32209/f/424469/index.rss",
+            "http://feeds.mashable.com/Mashable?format=xml",
+            "http://www.tagesanzeiger.ch/digital/rss.html",
+            "http://de.engadget.com/rss.xml",
+            "http://rss.golem.de/rss.php?feed=RSS1.0",
+            "http://www.itmagazine.ch/rss/news.xml",
+            "http://www.netbooknews.com/feed/",
+            "http://www.pocketpc.ch/external.php?do=rss&amp;type=newcontent&amp;sectionid=2&amp;days=120&amp;count=10",
+            "http://feeds.feedburner.com/aktuell/feeds/rss",
+            "http://derstandard.at/?page=rss&amp;ressort=web"
+    ];
+
+    var readers = [];
+
+    for (var i = 0; i < feedSources.length; i++) {
+        console.log(feedSources[i]);
+
+        readers.push(
+            new FeedSub(feedSources[i], {
+                interval: 1,
+                autoStart: true,
+                emitOnStart: true
+            })
+        );
+        readers[i].on('item', function(item){
+
+               var time = new Date();
+               var timestamp = time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds() +'---';
+               var msg= timestamp + '<a href="'+item.link+'" target="_blank">'+item.title+'</a>';
+               console.log(timestamp +"-- Titel: "+item.title);
+               console.log(timestamp +"-- Link: "+item.link);
+               console.log(timestamp +"-- pubdate: "+item.pubdate);
+               //console.dir(item);
+               io.sockets.emit('newsfeed',msg);
+
+               });
+        readers[i].on('error', function (){
+            console.log('unhandled error ');
+        });
+        console.log('readers pushed');
+
+    }
+
+    console.log('Anzahl feeds: '+readers.length);
+                </pre>
+
+            </div>            
+        </div>
+
+    </section>
+  <a class="exit-off-canvas"></a>
+
+  </div>
+</div>      
+        
+        <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+        <script src="js/vendor/jquery.js"></script>
+        <script src="js/foundation.min.js"></script>        
+        <script>
+            $(document).foundation({
+                offcanvas : {
+                  // Sets method in which offcanvas opens.
+                  // [ move | overlap_single | overlap ]
+                  open_method: 'move', 
+                  // Should the menu close when a menu link is clicked?
+                  // [ true | false ]
+                  close_on_click : true
+                }
+            });
+            
+            
+            window.onerror=function(){
+                $('#status').addClass("statusred");
+                $('#messages').prepend('<li id="servererror">SERVER OFFLINE?!?!</li>');
+            };
+            $('a.left-off-canvas-toggle').click(function() {
+                $('.inner-wrap').css('min-height', $(window).height() + 'px');
+            });            
+            
+            $('#about').click(function(){
+               $('#aboutpage').addClass("showdiv"); 
+               $('#homepage').addClass("hidediv");
+            });
+            $('#home').click(function(){
+               $('#aboutpage').removeClass("showdiv"); 
+               $('#homepage').removeClass("hidediv");
+            });
+    
+            var socket = io('http://localhost:3000');
+
+            socket.on('connect', function(){
+                  $('#status').removeClass("statusred");
+                  $('#servererror').remove();
+                  $('#messages').prepend('<li id="serverready">Geduld junger Padawan. Sobald neue Artikel verfügbar sind, werden sie hier angezeigt.</li>');
+            });
+            
+            socket.on('disconnect', function(){
+                  $('#messages').prepend('<li id="servererror">SERVER OFFLINE?!?!</li>');
+                  $('#status').addClass("statusred");
+            });            
+
+            socket.on('newsfeed', function(msg){
+                  
+                  $('#messages').prepend('<li>'+msg+'</li>');
+            });
+
+            
+          
+        </script>        
+    </body>
+</html>
+
+
