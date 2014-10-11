@@ -1,0 +1,11 @@
+{
+  "name": "RealTimeFeedreader",
+  "version": "1.0.0",
+  "description": "Real time feed reader",
+  "dependencies": {
+    "socket.io": "latest",
+    "feedsub": "latest",
+    "express": "~4.9.0"
+  },
+  "author": "Philipp Jauss"
+}
