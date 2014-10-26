@@ -128,7 +128,6 @@ and open the template in the editor.
 
     var feedSources= [
             "http://feeds.feedburner.com/stadt-bremerhaven/dqXM?format=xml",
-            "http://feeds.feedburner.com/netbooknewsde?format=xml",
             "http://feeds.feedburner.com/mobiflip",
             "http://www.heise.de/newsticker/heise.rdf",
             "http://rss.feedsportal.com/c/32209/f/424469/index.rss",
@@ -234,8 +233,9 @@ and open the template in the editor.
             });            
 
             socket.on('newsfeed', function(msg){
-                  
-                  $('#messages').prepend('<li>'+msg+'</li>');
+                  $('<li>'+msg+'</li>').hide().prependTo('#messages').css("background-color","lightGreen").fadeIn(3000, function(){
+                        $(this).css("background-color","white");
+                  }); 
             });
 
             

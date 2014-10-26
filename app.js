@@ -67,7 +67,6 @@ var newsqueueLength = 100;
 var newsqueue = queue(newsqueueLength);
 var feedSources= [
         "http://feeds.feedburner.com/stadt-bremerhaven/dqXM?format=xml",
-        "http://feeds.feedburner.com/netbooknewsde?format=xml",
         "http://feeds.feedburner.com/mobiflip",
         "http://www.heise.de/newsticker/heise.rdf",
         "http://feeds.feedburner.com/mobilegeeksde?utm_source=feedburner&amp;utm_medium=feed&amp;utm_campaign=Feed%253A+netbooknewsde+%2528Netbooknews.de+-+das+Netbook+Blog%2529",
