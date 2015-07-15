@@ -70,7 +70,6 @@ var feedSources= [
         "http://feeds.feedburner.com/mobiflip",
         "http://www.heise.de/newsticker/heise.rdf",
         "http://feeds.feedburner.com/mobilegeeksde?utm_source=feedburner&amp;utm_medium=feed&amp;utm_campaign=Feed%253A+netbooknewsde+%2528Netbooknews.de+-+das+Netbook+Blog%2529",
-        "http://www.tagesanzeiger.ch/digital/rss.html",
         "http://rss.golem.de/rss.php?feed=RSS1.0",
         "http://www.netbooknews.com/feed/",
         "http://channel9.msdn.com/Feeds/RSS",
