@@ -66,13 +66,8 @@ var readers = [];
 var newsqueueLength = 100;
 var newsqueue = queue(newsqueueLength);
 var feedSources= [
-        "http://feeds.feedburner.com/stadt-bremerhaven/dqXM?format=xml",
-        "http://feeds.feedburner.com/mobiflip",
         "http://derstandard.at/?page=rss&ressort=web",
-"http://channel9.msdn.com/Feeds/RSS",
-"http://feeds.feedburner.com/aktuell/feeds/rss",
         "http://feeds.feedburner.com/ScottHanselman"
-
 ];
 
 
